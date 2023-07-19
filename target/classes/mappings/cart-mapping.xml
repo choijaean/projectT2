@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cartDao">
+
+<insert id="insert" parameterType="cart">
+	  insert into CartTBL(cartId, custNo, productId, amount) 
+	  values(seq_CartTBL.nextval, #{custNo}, #{productId}, #{amount})
+</insert>
+
+<insert id="insertorder" parameterType="cartorder">
+	  insert into orderjumunseo (idx, custNo, cartId, productId, productName, amount, orderG) 
+	  values(seq_CartTBL.nextval, #{custNo}, #{cartId}, #{productId}, #{productName}, #{amount}, #{orderG})
+</insert>
+
+<insert id="insertordermoney" parameterType="cartordermoney">
+	  insert into ordermoney (idx, custNo, baesongbi, totalmoney) 
+	  values(seq_CartTBL.nextval, #{custNo}, #{baesongbi}, #{totalmoney})
+</insert>
+
+<select id="selectidx" parameterType="cartordermoney"  resultType="int">
+	select max(idx) as idx from ordermoney where custNo=#{custNo}
+</select>
+
+<select id="selectAllorder" parameterType="cartordermoney"  resultType="cartordermoney">
+	select m.idx as idx, m.custno as custNo, baesongbi, totalmoney, cartid, productid, productname,amount 
+from orderMoney m join orderjumunseo j on m.idx = j.orderG where m.custNo=#{custNo} order by productid desc
+
+</select>
+
+
+<delete id="delete" parameterType="cart">
+	  delete from CartTBL where cartId = #{cartId}
+</delete>
+
+<delete id="deleteAll" parameterType="cart">
+	  delete from CartTBL 
+</delete>
+
+<update id="update" parameterType="cart">
+	  update CartTBL set amount=#{amount} where cartId = #{cartId}
+</update>
+
+
+<select id="selectAll" parameterType="cart"  resultType="cart">
+	select custNo, cartId, c.productId as productId, productName, productPrice, productImg as productImgStr,amount from cartTBL c join productTBL p on c.productId=p.productId
+	order by productId desc
+</select>
+
+</mapper>	
